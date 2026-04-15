@@ -2,74 +2,322 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ── CSS 变量：深色默认，.light 覆盖 ──────────────────────────────────── */
+:root {
+  --bg-page:        #0d0f14;
+  --bg-header:      #13161e;
+  --bg-card:        #13161e;
+  --bg-input:       #1a1e28;
+  --bg-input-mgr:   #1a1e28;
+  --bg-btn-ghost:   #222736;
+  --bg-btn-ghost-h: #2c3346;
+  --bg-tag:         #222736;
+  --bg-dropdown:    #1a1e28;
+  --bg-preview:     #13161e;
+
+  --border-default: #222736;
+  --border-input:   #2c3346;
+  --border-tag:     #2c3346;
+
+  --text-primary:   #e2e8f0;
+  --text-secondary: #94a3b8;
+  --text-muted:     #475569;
+  --text-label:     #94a3b8;
+  --text-ghost-btn: #cbd5e1;
+
+  --scrollbar-track: #13161e;
+  --scrollbar-thumb: #2c3346;
+}
+
+html:not(.dark) {
+  --bg-page:        #f1f5f9;
+  --bg-header:      #ffffff;
+  --bg-card:        #ffffff;
+  --bg-input:       #f8fafc;
+  --bg-input-mgr:   #f1f5f9;
+  --bg-btn-ghost:   #e2e8f0;
+  --bg-btn-ghost-h: #cbd5e1;
+  --bg-tag:         #e2e8f0;
+  --bg-dropdown:    #ffffff;
+  --bg-preview:     #f8fafc;
+
+  --border-default: #e2e8f0;
+  --border-input:   #cbd5e1;
+  --border-tag:     #cbd5e1;
+
+  --text-primary:   #0f172a;
+  --text-secondary: #475569;
+  --text-muted:     #94a3b8;
+  --text-label:     #64748b;
+  --text-ghost-btn: #334155;
+
+  --scrollbar-track: #f1f5f9;
+  --scrollbar-thumb: #cbd5e1;
+}
+
 @layer base {
-  * {
-    box-sizing: border-box;
-  }
+  * { box-sizing: border-box; }
+
   html {
     font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
   }
+
   body {
-    @apply bg-surface-900 text-slate-200 m-0 p-0;
+    background-color: var(--bg-page);
+    color: var(--text-primary);
+    margin: 0;
+    padding: 0;
     min-height: 100vh;
+    transition: background-color 0.2s, color 0.2s;
   }
+
   /* Custom scrollbar */
   ::-webkit-scrollbar { width: 6px; height: 6px; }
-  ::-webkit-scrollbar-track { @apply bg-surface-800; }
-  ::-webkit-scrollbar-thumb { @apply bg-surface-500 rounded-full; }
-  ::-webkit-scrollbar-thumb:hover { @apply bg-brand-500; }
+  ::-webkit-scrollbar-track { background: var(--scrollbar-track); }
+  ::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 9999px; }
+  ::-webkit-scrollbar-thumb:hover { background: #f97316; }
+
+  /* datetime-local input calendar icon color in light mode */
+  html:not(.dark) input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+    filter: invert(0.4);
+  }
 }
 
 @layer components {
+  /* ── Labels ── */
   .field-label {
-    @apply block text-xs font-medium text-slate-400 mb-1.5 uppercase tracking-wide;
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--text-label);
+    margin-bottom: 0.375rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
   }
+
+  /* ── Inputs ── */
   .input-base {
-    @apply w-full bg-surface-700 border border-surface-500 rounded-md px-3 py-2
-           text-sm text-slate-200 placeholder-slate-500
-           focus:outline-none focus:ring-1 focus:ring-brand-500 focus:border-brand-500
-           transition-colors;
+    width: 100%;
+    background-color: var(--bg-input);
+    border: 1px solid var(--border-input);
+    border-radius: 0.375rem;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    color: var(--text-primary);
+    transition: border-color 0.15s, box-shadow 0.15s, background-color 0.2s;
+    outline: none;
   }
+  .input-base::placeholder { color: var(--text-muted); }
+  .input-base:focus {
+    border-color: #f97316;
+    box-shadow: 0 0 0 1px #f97316;
+  }
+
   .select-base {
     @apply input-base cursor-pointer;
     appearance: none;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 10px center;
     padding-right: 32px;
   }
+  /* Chevron SVG tinted per theme */
+  .dark .select-base {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  }
+  html:not(.dark) .select-base {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2020/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2364748b' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  }
+
+  /* ── Buttons ── */
   .btn-primary {
-    @apply inline-flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium
-           bg-brand-500 hover:bg-brand-600 text-white
-           transition-colors cursor-pointer border-0;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    background-color: #f97316;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.15s;
   }
+  .btn-primary:hover { background-color: #ea580c; }
+
   .btn-ghost {
-    @apply inline-flex items-center gap-2 px-3 py-1.5 rounded-md text-xs font-medium
-           bg-surface-600 hover:bg-surface-500 text-slate-300 hover:text-slate-100
-           transition-colors cursor-pointer border-0;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.375rem 0.75rem;
+    border-radius: 0.375rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    background-color: var(--bg-btn-ghost);
+    color: var(--text-ghost-btn);
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.15s, color 0.15s;
   }
+  .btn-ghost:hover {
+    background-color: var(--bg-btn-ghost-h);
+    color: var(--text-primary);
+  }
+
   .btn-danger {
-    @apply inline-flex items-center gap-1 px-2 py-1 rounded text-xs
-           bg-red-900/40 hover:bg-red-800/60 text-red-400 hover:text-red-300
-           transition-colors cursor-pointer border-0;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.15s, color 0.15s;
   }
+  .dark .btn-danger {
+    background-color: rgba(127,29,29,0.4);
+    color: #f87171;
+  }
+  .dark .btn-danger:hover {
+    background-color: rgba(153,27,27,0.6);
+    color: #fca5a5;
+  }
+  html:not(.dark) .btn-danger {
+    background-color: #fee2e2;
+    color: #dc2626;
+  }
+  html:not(.dark) .btn-danger:hover {
+    background-color: #fecaca;
+    color: #b91c1c;
+  }
+
+  /* ── Cards ── */
   .card {
-    @apply bg-surface-800 border border-surface-600 rounded-xl p-4;
+    background-color: var(--bg-card);
+    border: 1px solid var(--border-default);
+    border-radius: 0.75rem;
+    padding: 1rem;
+    transition: background-color 0.2s, border-color 0.2s;
   }
+
+  /* ── Section titles ── */
   .section-title {
-    @apply text-xs font-semibold text-brand-400 uppercase tracking-widest mb-3 flex items-center gap-2;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #f97316;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
   }
+
+  /* ── Radio buttons ── */
   .radio-btn {
-    @apply flex-1 py-2 px-3 text-sm rounded-md border cursor-pointer text-center transition-colors;
+    flex: 1;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    border-radius: 0.375rem;
+    border-width: 1px;
+    border-style: solid;
+    cursor: pointer;
+    text-align: center;
+    transition: background-color 0.15s, border-color 0.15s, color 0.15s;
   }
   .radio-btn-active {
-    @apply bg-brand-500 border-brand-500 text-white;
+    background-color: #f97316;
+    border-color: #f97316;
+    color: #fff;
   }
   .radio-btn-inactive {
-    @apply bg-surface-700 border-surface-500 text-slate-400 hover:border-brand-500 hover:text-slate-200;
+    background-color: var(--bg-input);
+    border-color: var(--border-input);
+    color: var(--text-secondary);
   }
+  .radio-btn-inactive:hover {
+    border-color: #f97316;
+    color: var(--text-primary);
+  }
+
+  /* ── Tags ── */
   .tag {
-    @apply inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs
-           bg-surface-600 text-slate-300 border border-surface-500;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.125rem 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    background-color: var(--bg-tag);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-tag);
+    transition: background-color 0.2s;
+  }
+
+  /* ── Symbol manager panel ── */
+  .symbol-mgr-panel {
+    margin-top: 0.5rem;
+    padding: 0.75rem;
+    background-color: var(--bg-input-mgr);
+    border-radius: 0.5rem;
+    border: 1px solid var(--border-input);
+  }
+
+  /* ── Dropdown panel ── */
+  .dropdown-panel {
+    background-color: var(--bg-dropdown);
+    border: 1px solid var(--border-default);
+    border-radius: 0.75rem;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+  }
+  html:not(.dark) .dropdown-panel {
+    box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+  }
+
+  /* ── Preview area ── */
+  .preview-area {
+    background-color: var(--bg-preview);
+    border: 1px solid var(--border-default);
+    border-radius: 0.75rem;
+    padding: 1.25rem;
+    color: var(--text-primary);
+    transition: background-color 0.2s, border-color 0.2s;
+  }
+
+  /* ── Header bar ── */
+  .header-bar {
+    background-color: var(--bg-header);
+    border-bottom: 1px solid var(--border-default);
+    transition: background-color 0.2s, border-color 0.2s;
+  }
+
+  /* ── Sidebar ── */
+  .sidebar-border {
+    border-right: 1px solid var(--border-default);
+    transition: border-color 0.2s;
+  }
+
+  /* ── Strategy preview pre ── */
+  .strategy-preview {
+    background-color: var(--bg-input-mgr);
+    border: 1px solid var(--border-input);
+    border-radius: 0.5rem;
+    padding: 0.75rem;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    overflow: auto;
+    max-height: 13rem;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    font-family: monospace;
+    transition: background-color 0.2s;
+  }
+
+  /* ── Divider ── */
+  .divider-v {
+    width: 1px;
+    height: 1.25rem;
+    background-color: var(--border-input);
   }
 }

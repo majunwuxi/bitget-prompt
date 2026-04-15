@@ -25,7 +25,7 @@ export default function BlockBPanel({ value, onChange }: Props) {
       {/* Stop Loss */}
       <div>
         <label className="field-label">止损偏移量</label>
-        <p className="text-xs text-slate-500 mb-1.5">
+        <p className="text-xs mb-1.5" style={{ color: 'var(--text-muted)' }}>
           相对于关键价位（做多取最低价 / 做空取最高价）的偏移量
         </p>
         <div className="relative">
@@ -37,14 +37,15 @@ export default function BlockBPanel({ value, onChange }: Props) {
             value={value.stopLossOffset}
             onChange={e => set('stopLossOffset', Number(e.target.value))}
           />
-          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-500 pointer-events-none">USDT</span>
+          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs pointer-events-none"
+            style={{ color: 'var(--text-muted)' }}>USDT</span>
         </div>
       </div>
 
       {/* Take Profit */}
       <div>
         <label className="field-label">止盈百分比</label>
-        <p className="text-xs text-slate-500 mb-1.5">基于入场价的盈利百分比</p>
+        <p className="text-xs mb-1.5" style={{ color: 'var(--text-muted)' }}>基于入场价的盈利百分比</p>
         <div className="relative">
           <input
             type="number"
@@ -54,14 +55,15 @@ export default function BlockBPanel({ value, onChange }: Props) {
             value={value.takeProfitPct}
             onChange={e => set('takeProfitPct', Number(e.target.value))}
           />
-          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-500 pointer-events-none">%</span>
+          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs pointer-events-none"
+            style={{ color: 'var(--text-muted)' }}>%</span>
         </div>
       </div>
 
       {/* Polling */}
       <div>
         <label className="field-label">巡检频率</label>
-        <p className="text-xs text-slate-500 mb-1.5">每根K线收盘后多久检查一次</p>
+        <p className="text-xs mb-1.5" style={{ color: 'var(--text-muted)' }}>每根K线收盘后多久检查一次</p>
         <div className="flex gap-2">
           <input
             type="text"
@@ -85,10 +87,10 @@ export default function BlockBPanel({ value, onChange }: Props) {
       {/* Trailing Stop */}
       <div>
         <label className="field-label">移动止损</label>
-        <p className="text-xs text-slate-500 mb-2">价格达到触发条件时，止损价同步移动</p>
+        <p className="text-xs mb-2" style={{ color: 'var(--text-muted)' }}>价格达到触发条件时，止损价同步移动</p>
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="text-xs text-slate-500 mb-1 block">触发条件（价格变动 %）</label>
+            <label className="text-xs mb-1 block" style={{ color: 'var(--text-muted)' }}>触发条件（价格变动 %）</label>
             <div className="relative">
               <input
                 type="number"
@@ -98,11 +100,12 @@ export default function BlockBPanel({ value, onChange }: Props) {
                 value={value.trailingTriggerPct}
                 onChange={e => set('trailingTriggerPct', Number(e.target.value))}
               />
-              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-500 pointer-events-none">%</span>
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs pointer-events-none"
+                style={{ color: 'var(--text-muted)' }}>%</span>
             </div>
           </div>
           <div>
-            <label className="text-xs text-slate-500 mb-1 block">移动步长（止损移动 %）</label>
+            <label className="text-xs mb-1 block" style={{ color: 'var(--text-muted)' }}>移动步长（止损移动 %）</label>
             <div className="relative">
               <input
                 type="number"
@@ -112,12 +115,13 @@ export default function BlockBPanel({ value, onChange }: Props) {
                 value={value.trailingStepPct}
                 onChange={e => set('trailingStepPct', Number(e.target.value))}
               />
-              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-500 pointer-events-none">%</span>
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs pointer-events-none"
+                style={{ color: 'var(--text-muted)' }}>%</span>
             </div>
           </div>
         </div>
         {(value.trailingTriggerPct === 0 || value.trailingStepPct === 0) && (
-          <p className="text-xs text-slate-600 mt-1.5">
+          <p className="text-xs mt-1.5" style={{ color: 'var(--text-muted)' }}>
             触发 / 步长为 0 则不生成移动止损描述
           </p>
         )}

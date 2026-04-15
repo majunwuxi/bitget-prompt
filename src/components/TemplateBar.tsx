@@ -13,9 +13,7 @@ interface Props {
   currentStrategyId: string
 }
 
-export default function TemplateBar({
-  templates, onLoad, onSave, onDelete,
-}: Props) {
+export default function TemplateBar({ templates, onLoad, onSave, onDelete }: Props) {
   const [open, setOpen] = useState(false)
   const [saveName, setSaveName] = useState('')
   const [saving, setSaving] = useState(false)
@@ -32,7 +30,6 @@ export default function TemplateBar({
   return (
     <div className="relative">
       <div className="flex items-center gap-2">
-        {/* Load Template Dropdown */}
         <button
           type="button"
           className="btn-ghost flex items-center gap-1.5"
@@ -40,11 +37,13 @@ export default function TemplateBar({
         >
           <BookMarked size={13} />
           预设模板
-          <span className="bg-surface-500 rounded px-1 text-xs text-slate-400">{templates.length}</span>
+          <span className="rounded px-1 text-xs"
+            style={{ background: 'var(--bg-btn-ghost)', color: 'var(--text-muted)' }}>
+            {templates.length}
+          </span>
           <ChevronDown size={12} className={clsx('transition-transform', open && 'rotate-180')} />
         </button>
 
-        {/* Save Button */}
         {saving ? (
           <div className="flex items-center gap-1.5">
             <input
@@ -69,39 +68,45 @@ export default function TemplateBar({
         )}
       </div>
 
-      {/* Dropdown */}
       {open && (
-        <div className="absolute top-full left-0 mt-1.5 w-72 bg-surface-700 border border-surface-500 rounded-xl shadow-2xl z-50 overflow-hidden">
+        <div className="absolute top-full left-0 mt-1.5 w-72 dropdown-panel z-50 overflow-hidden">
           {templates.length === 0 ? (
-            <p className="p-4 text-xs text-slate-500 text-center">暂无保存的预设</p>
+            <p className="p-4 text-xs text-center" style={{ color: 'var(--text-muted)' }}>暂无保存的预设</p>
           ) : (
             <ul className="max-h-64 overflow-y-auto">
               {templates.map(t => (
                 <li
                   key={t.id}
-                  className="flex items-center gap-2 px-3 py-2.5 hover:bg-surface-600 transition-colors border-b border-surface-600 last:border-0"
+                  className="flex items-center gap-2 px-3 py-2.5 transition-colors"
+                  style={{ borderBottom: '1px solid var(--border-default)' }}
+                  onMouseEnter={e => (e.currentTarget.style.background = 'var(--bg-btn-ghost)')}
+                  onMouseLeave={e => (e.currentTarget.style.background = '')}
                 >
                   <button
                     type="button"
-                    className="flex-1 text-left text-sm text-slate-200 hover:text-brand-400 transition-colors truncate"
+                    className="flex-1 text-left text-sm truncate transition-colors hover:text-brand-400"
+                    style={{ color: 'var(--text-primary)', background: 'none', border: 'none', cursor: 'pointer' }}
                     onClick={() => { onLoad(t); setOpen(false) }}
                   >
                     {t.name}
                   </button>
-                  <span className="text-xs text-slate-600 shrink-0">
+                  <span className="text-xs shrink-0" style={{ color: 'var(--text-muted)' }}>
                     {new Date(t.updatedAt).toLocaleDateString('zh-CN')}
                   </span>
                   {confirmDeleteId === t.id ? (
                     <div className="flex gap-1">
-                      <button type="button" className="btn-danger py-0.5 px-1" onClick={() => { onDelete(t.id); setConfirmDeleteId(null) }}>
+                      <button type="button" className="btn-danger py-0.5 px-1"
+                        onClick={() => { onDelete(t.id); setConfirmDeleteId(null) }}>
                         <Check size={10} />
                       </button>
-                      <button type="button" className="btn-ghost py-0.5 px-1" onClick={() => setConfirmDeleteId(null)}>
+                      <button type="button" className="btn-ghost py-0.5 px-1"
+                        onClick={() => setConfirmDeleteId(null)}>
                         <X size={10} />
                       </button>
                     </div>
                   ) : (
-                    <button type="button" className="btn-danger py-0.5 px-1" onClick={() => setConfirmDeleteId(t.id)}>
+                    <button type="button" className="btn-danger py-0.5 px-1"
+                      onClick={() => setConfirmDeleteId(t.id)}>
                       <Trash2 size={11} />
                     </button>
                   )}

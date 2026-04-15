@@ -1,6 +1,7 @@
 import { useMemo } from 'react'
-import { Zap } from 'lucide-react'
+import { Zap, Sun, Moon } from 'lucide-react'
 import { useLocalStorage } from './hooks/useLocalStorage'
+import { useTheme } from './hooks/useTheme'
 import { BlockA, BlockB, Strategy, Template, FormState } from './types'
 import { DEFAULT_HAMMER_STRATEGY, DEFAULT_SYMBOLS } from './data/defaults'
 import { generatePrompt } from './lib/promptGenerator'
@@ -20,7 +21,7 @@ const DEFAULT_FORM: FormState = {
       const d = new Date()
       d.setDate(d.getDate() + 2)
       d.setHours(22, 16, 0, 0)
-      return d.toISOString().slice(0, 16) // "YYYY-MM-DDTHH:mm"
+      return d.toISOString().slice(0, 16)
     })(),
     timeframe: '15m',
     amount:    60,
@@ -28,10 +29,10 @@ const DEFAULT_FORM: FormState = {
     entryType: 'market',
   },
   blockB: {
-    stopLossOffset:    2,
-    takeProfitPct:     2.5,
-    pollingValue:      '5~10',
-    pollingUnit:       'seconds',
+    stopLossOffset:     2,
+    takeProfitPct:      2.5,
+    pollingValue:       '5~10',
+    pollingUnit:        'seconds',
     trailingTriggerPct: 0.5,
     trailingStepPct:    0.5,
   },
@@ -41,13 +42,13 @@ const DEFAULT_FORM: FormState = {
 // ─── App ─────────────────────────────────────────────────────────────────────
 
 export default function App() {
-  // Persistent state
-  const [form, setForm]           = useLocalStorage<FormState>('form_state', DEFAULT_FORM)
-  const [symbols, setSymbols]     = useLocalStorage<string[]>('symbols_pool', DEFAULT_SYMBOLS)
-  const [strategies, setStrategies] = useLocalStorage<Strategy[]>('strategies_pool', [DEFAULT_HAMMER_STRATEGY])
-  const [templates, setTemplates] = useLocalStorage<Template[]>('templates_pool', [])
+  const { theme, toggle: toggleTheme } = useTheme()
 
-  // Derived
+  const [form, setForm]             = useLocalStorage<FormState>('form_state', DEFAULT_FORM)
+  const [symbols, setSymbols]       = useLocalStorage<string[]>('symbols_pool', DEFAULT_SYMBOLS)
+  const [strategies, setStrategies] = useLocalStorage<Strategy[]>('strategies_pool', [DEFAULT_HAMMER_STRATEGY])
+  const [templates, setTemplates]   = useLocalStorage<Template[]>('templates_pool', [])
+
   const selectedStrategy = useMemo(
     () => strategies.find(s => s.id === form.selectedStrategyId) ?? strategies[0],
     [strategies, form.selectedStrategyId],
@@ -55,15 +56,10 @@ export default function App() {
 
   const prompt = useMemo(() => {
     if (!selectedStrategy) return '（请至少创建一个量化策略）'
-    return generatePrompt(
-      form.blockA,
-      form.blockB,
-      selectedStrategy.name,
-      selectedStrategy.content,
-    )
+    return generatePrompt(form.blockA, form.blockB, selectedStrategy.name, selectedStrategy.content)
   }, [form, selectedStrategy])
 
-  // ─── Handlers ──────────────────────────────────────────────────────────────
+  // ─── Handlers ────────────────────────────────────────────────────────────
 
   const setBlockA = (blockA: BlockA) => setForm(f => ({ ...f, blockA }))
   const setBlockB = (blockB: BlockB) => setForm(f => ({ ...f, blockB }))
@@ -71,14 +67,11 @@ export default function App() {
   const addSymbol    = (s: string) => setSymbols(prev => [...prev, s])
   const removeSymbol = (s: string) => setSymbols(prev => prev.filter(x => x !== s))
 
-  const saveStrategy = (s: Strategy) => {
+  const saveStrategy = (s: Strategy) =>
     setStrategies(prev => {
       const idx = prev.findIndex(x => x.id === s.id)
-      return idx >= 0
-        ? prev.map(x => x.id === s.id ? s : x)
-        : [...prev, s]
+      return idx >= 0 ? prev.map(x => x.id === s.id ? s : x) : [...prev, s]
     })
-  }
 
   const deleteStrategy = (id: string) => {
     setStrategies(prev => prev.filter(s => s.id !== id))
@@ -90,42 +83,36 @@ export default function App() {
 
   const saveTemplate = (name: string) => {
     const now = new Date().toISOString()
-    const t: Template = {
-      id:          'tpl_' + Date.now(),
-      name,
-      blockA:      form.blockA,
-      blockB:      form.blockB,
-      strategyId:  form.selectedStrategyId,
-      createdAt:   now,
-      updatedAt:   now,
-    }
-    setTemplates(prev => [...prev, t])
+    setTemplates(prev => [...prev, {
+      id: 'tpl_' + Date.now(), name,
+      blockA: form.blockA, blockB: form.blockB,
+      strategyId: form.selectedStrategyId,
+      createdAt: now, updatedAt: now,
+    }])
   }
 
-  const loadTemplate = (t: Template) => {
-    setForm({
-      blockA:             t.blockA,
-      blockB:             t.blockB,
-      selectedStrategyId: t.strategyId,
-    })
-  }
+  const loadTemplate  = (t: Template) =>
+    setForm({ blockA: t.blockA, blockB: t.blockB, selectedStrategyId: t.strategyId })
 
   const deleteTemplate = (id: string) => setTemplates(prev => prev.filter(t => t.id !== id))
 
-  // ─── Render ─────────────────────────────────────────────────────────────────
+  // ─── Render ───────────────────────────────────────────────────────────────
 
   return (
     <div className="min-h-screen flex flex-col">
       {/* Top Bar */}
-      <header className="bg-surface-800 border-b border-surface-600 px-4 py-3 flex items-center gap-4 flex-wrap">
+      <header className="header-bar px-4 py-3 flex items-center gap-4 flex-wrap">
+        {/* Logo */}
         <div className="flex items-center gap-2 shrink-0">
           <div className="w-7 h-7 rounded-lg bg-brand-500 flex items-center justify-center">
             <Zap size={16} className="text-white" />
           </div>
-          <span className="font-bold text-white text-sm tracking-wide">Bitget 交易指令生成器</span>
+          <span className="font-bold text-sm tracking-wide" style={{ color: 'var(--text-primary)' }}>
+            Bitget 交易指令生成器
+          </span>
         </div>
 
-        <div className="h-5 w-px bg-surface-500 hidden sm:block" />
+        <div className="divider-v hidden sm:block" />
 
         <TemplateBar
           templates={templates}
@@ -136,12 +123,28 @@ export default function App() {
           currentBlockB={form.blockB}
           currentStrategyId={form.selectedStrategyId}
         />
+
+        {/* Theme Toggle — pushed to far right */}
+        <div className="ml-auto">
+          <button
+            type="button"
+            onClick={toggleTheme}
+            className="btn-ghost flex items-center gap-1.5"
+            title={theme === 'dark' ? '切换到淡色模式' : '切换到深色模式'}
+          >
+            {theme === 'dark' ? (
+              <><Sun size={14} className="text-amber-400" /> 淡色</>
+            ) : (
+              <><Moon size={14} className="text-indigo-400" /> 深色</>
+            )}
+          </button>
+        </div>
       </header>
 
       {/* Main Layout */}
-      <div className="flex-1 flex gap-0 overflow-hidden" style={{ height: 'calc(100vh - 56px)' }}>
+      <div className="flex-1 flex overflow-hidden" style={{ height: 'calc(100vh - 56px)' }}>
         {/* Left: Form Panels */}
-        <aside className="w-96 shrink-0 overflow-y-auto p-4 space-y-3 border-r border-surface-600">
+        <aside className="w-96 shrink-0 overflow-y-auto p-4 space-y-3 sidebar-border">
           <BlockAPanel
             value={form.blockA}
             symbols={symbols}
@@ -149,10 +152,7 @@ export default function App() {
             onAddSymbol={addSymbol}
             onRemoveSymbol={removeSymbol}
           />
-          <BlockBPanel
-            value={form.blockB}
-            onChange={setBlockB}
-          />
+          <BlockBPanel value={form.blockB} onChange={setBlockB} />
           <BlockCPanel
             strategies={strategies}
             selectedId={form.selectedStrategyId}

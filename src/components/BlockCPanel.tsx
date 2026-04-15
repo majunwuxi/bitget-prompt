@@ -17,30 +17,20 @@ function newId() {
 
 export default function BlockCPanel({ strategies, selectedId, onSelect, onSave, onDelete }: Props) {
   const selected = strategies.find(s => s.id === selectedId)
-
-  // editing state: null = viewing, Strategy = editing/creating
   const [editing, setEditing] = useState<Strategy | null>(null)
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null)
 
-  const startNew = () => {
-    setEditing({
-      id: newId(),
-      name: '',
-      content: '',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-    })
-  }
+  const startNew = () => setEditing({
+    id: newId(), name: '', content: '',
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  })
 
-  const startEdit = (s: Strategy) => {
-    setEditing({ ...s })
-  }
-
+  const startEdit = (s: Strategy) => setEditing({ ...s })
   const cancelEdit = () => setEditing(null)
 
   const commitSave = () => {
-    if (!editing) return
-    if (!editing.name.trim()) return
+    if (!editing || !editing.name.trim()) return
     onSave({ ...editing, updatedAt: new Date().toISOString() })
     onSelect(editing.id)
     setEditing(null)
@@ -65,7 +55,6 @@ export default function BlockCPanel({ strategies, selectedId, onSelect, onSave, 
         </button>
       </div>
 
-      {/* Strategy Selector */}
       {!editing && (
         <>
           <div>
@@ -81,17 +70,12 @@ export default function BlockCPanel({ strategies, selectedId, onSelect, onSave, 
             </select>
           </div>
 
-          {/* Strategy Preview / Actions */}
           {selected && (
             <div>
               <div className="flex items-center justify-between mb-1.5">
                 <label className="field-label mb-0">策略内容预览</label>
                 <div className="flex gap-1">
-                  <button
-                    type="button"
-                    className="btn-ghost py-1"
-                    onClick={() => startEdit(selected)}
-                  >
+                  <button type="button" className="btn-ghost py-1" onClick={() => startEdit(selected)}>
                     <Edit3 size={12} /> 编辑
                   </button>
                   {strategies.length > 1 && (
@@ -112,15 +96,12 @@ export default function BlockCPanel({ strategies, selectedId, onSelect, onSave, 
                   )}
                 </div>
               </div>
-              <pre className="bg-surface-700 border border-surface-500 rounded-lg p-3 text-xs text-slate-300 overflow-auto max-h-52 leading-relaxed whitespace-pre-wrap font-mono">
-                {selected.content}
-              </pre>
+              <pre className="strategy-preview">{selected.content}</pre>
             </div>
           )}
         </>
       )}
 
-      {/* Editing Panel */}
       {editing && (
         <div className="space-y-3">
           <div>
@@ -135,27 +116,17 @@ export default function BlockCPanel({ strategies, selectedId, onSelect, onSave, 
           <div>
             <label className="field-label">策略量化规则内容</label>
             <textarea
-              className={clsx(
-                'input-base font-mono text-xs leading-relaxed resize-y',
-                'min-h-[200px]',
-              )}
+              className={clsx('input-base font-mono text-xs leading-relaxed resize-y min-h-[200px]')}
               placeholder="粘贴量化规则描述…"
               value={editing.content}
               onChange={e => setEditing({ ...editing, content: e.target.value })}
             />
           </div>
           <div className="flex gap-2">
-            <button
-              type="button"
-              className="btn-primary"
-              onClick={commitSave}
-              disabled={!editing.name.trim()}
-            >
+            <button type="button" className="btn-primary" onClick={commitSave} disabled={!editing.name.trim()}>
               <Save size={14} /> 保存策略
             </button>
-            <button type="button" className="btn-ghost" onClick={cancelEdit}>
-              取消
-            </button>
+            <button type="button" className="btn-ghost" onClick={cancelEdit}>取消</button>
           </div>
         </div>
       )}

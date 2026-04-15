@@ -11,19 +11,16 @@ export default function PromptPreview({ text }: Props) {
   const handleCopy = async () => {
     try {
       await navigator.clipboard.writeText(text)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
     } catch {
-      // fallback for older browsers
       const el = document.createElement('textarea')
       el.value = text
       document.body.appendChild(el)
       el.select()
       document.execCommand('copy')
       document.body.removeChild(el)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2000)
     }
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
   }
 
   return (
@@ -31,17 +28,15 @@ export default function PromptPreview({ text }: Props) {
       {/* Header */}
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
-          <RefreshCw size={14} className="text-brand-400 animate-none" />
-          <span className="text-xs font-semibold text-slate-300 uppercase tracking-wider">
+          <RefreshCw size={14} className="text-brand-400" />
+          <span className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--text-secondary)' }}>
             实时指令预览
           </span>
-          <span className="text-xs text-slate-600">（实时更新，可直接复制给 Openclaw）</span>
+          <span className="text-xs hidden sm:inline" style={{ color: 'var(--text-muted)' }}>
+            （实时更新，可直接复制给 Openclaw）
+          </span>
         </div>
-        <button
-          type="button"
-          onClick={handleCopy}
-          className="btn-primary"
-        >
+        <button type="button" onClick={handleCopy} className="btn-primary">
           {copied ? (
             <>
               <Check size={14} className="text-green-300" />
@@ -57,18 +52,11 @@ export default function PromptPreview({ text }: Props) {
       </div>
 
       {/* Preview Area */}
-      <div className="flex-1 relative">
-        <pre className="
-          h-full overflow-auto
-          bg-surface-800 border border-surface-600 rounded-xl p-5
-          text-sm text-slate-200 leading-7 whitespace-pre-wrap
-          font-mono
-        ">
+      <div className="flex-1 relative overflow-hidden">
+        <pre className="preview-area h-full overflow-auto text-sm leading-7 whitespace-pre-wrap font-mono">
           {text}
         </pre>
-
-        {/* Character count */}
-        <div className="absolute bottom-3 right-4 text-xs text-slate-600">
+        <div className="absolute bottom-3 right-4 text-xs" style={{ color: 'var(--text-muted)' }}>
           {text.length} 字符
         </div>
       </div>

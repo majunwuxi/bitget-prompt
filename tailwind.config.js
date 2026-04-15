@@ -22,6 +22,14 @@ export default {
           600: '#222736',
           500: '#2c3346',
         },
+        // ── 淡色主题 surface ─────────────────────────────
+        light: {
+          50:  '#f8fafc',
+          100: '#f1f5f9',
+          200: '#e2e8f0',
+          300: '#cbd5e1',
+          400: '#94a3b8',
+        },
       },
       fontFamily: {
         mono: ['JetBrains Mono', 'Fira Code', 'Consolas', 'monospace'],

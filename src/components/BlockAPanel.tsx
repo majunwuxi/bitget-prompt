@@ -61,7 +61,7 @@ export default function BlockAPanel({ value, symbols, onChange, onAddSymbol, onR
 
         {/* Symbol Manager */}
         {showSymbolMgr && (
-          <div className="mt-2 p-3 bg-surface-700 rounded-lg border border-surface-500 space-y-2">
+          <div className="symbol-mgr-panel space-y-2">
             <div className="flex gap-2">
               <input
                 className="input-base flex-1 text-xs py-1.5"
@@ -81,9 +81,7 @@ export default function BlockAPanel({ value, symbols, onChange, onAddSymbol, onR
                   <button
                     type="button"
                     className="hover:text-red-400 ml-0.5"
-                    onClick={() => {
-                      if (s !== value.symbol) onRemoveSymbol(s)
-                    }}
+                    onClick={() => { if (s !== value.symbol) onRemoveSymbol(s) }}
                     title={s === value.symbol ? '当前使用中，无法删除' : '删除'}
                     disabled={s === value.symbol}
                   >
@@ -136,7 +134,7 @@ export default function BlockAPanel({ value, symbols, onChange, onAddSymbol, onR
                 'px-3 py-1.5 rounded-md text-xs border cursor-pointer transition-colors',
                 value.timeframe === tf
                   ? 'bg-brand-500 border-brand-500 text-white'
-                  : 'bg-surface-700 border-surface-500 text-slate-400 hover:border-brand-500',
+                  : 'radio-btn-inactive',
               )}
               onClick={() => set('timeframe', tf)}
             >
@@ -158,7 +156,8 @@ export default function BlockAPanel({ value, symbols, onChange, onAddSymbol, onR
             value={value.amount}
             onChange={e => set('amount', Number(e.target.value))}
           />
-          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-500 pointer-events-none">USDT</span>
+          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs pointer-events-none"
+            style={{ color: 'var(--text-muted)' }}>USDT</span>
         </div>
       </div>
 
@@ -177,7 +176,7 @@ export default function BlockAPanel({ value, symbols, onChange, onAddSymbol, onR
           value={value.leverage}
           onChange={e => set('leverage', Number(e.target.value))}
         />
-        <div className="flex justify-between text-xs text-slate-600 mt-0.5">
+        <div className="flex justify-between text-xs mt-0.5" style={{ color: 'var(--text-muted)' }}>
           <span>1x</span><span>25x</span><span>50x</span><span>75x</span><span>100x</span><span>125x</span>
         </div>
       </div>
@@ -208,7 +207,8 @@ export default function BlockAPanel({ value, symbols, onChange, onAddSymbol, onR
               value={value.limitPrice ?? ''}
               onChange={e => set('limitPrice', Number(e.target.value))}
             />
-            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-500 pointer-events-none">USDT</span>
+            <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs pointer-events-none"
+              style={{ color: 'var(--text-muted)' }}>USDT</span>
           </div>
         )}
       </div>
